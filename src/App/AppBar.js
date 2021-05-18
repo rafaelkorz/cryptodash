@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { Component } from 'react';
+import { AppContext } from './AppProvider';
 
 const Logo = styled.div`
   font-size: 1.5em;
@@ -8,7 +9,7 @@ const Logo = styled.div`
 const ControlButtonElem = styled.div`
   cursor: pointer;
   ${props => props.active && css`
-    text-shadow: 0px 0px 60px #03ff03;
+    text-shadow: 0px 0px 30px #03ff03;
   `}
 `
 
@@ -16,11 +17,18 @@ const toProperCase = (lower) => {
   return lower.charAt(0).toUpperCase() + lower.substr(1);
 }
 
-const ControlButton = ({name, active}) => {
+function ControlButton({ name }) {
   return (
-    <ControlButtonElem active={active}>
-      {toProperCase(name)}
-    </ControlButtonElem>
+    <AppContext.Consumer>
+      {({ page, setPage }) => (
+        <ControlButtonElem
+          active={page === name}
+          onClick={() => setPage(name)}
+        >
+          {toProperCase(name)}
+        </ControlButtonElem>
+      )}
+    </AppContext.Consumer>
   )
 }
 const BarStyle = styled.div`
@@ -28,17 +36,18 @@ const BarStyle = styled.div`
   grid-template-columns: 100px auto 100px 100px;
 `;
 
-class Bar extends Component {
+class AppBar extends Component {
   render() {
     return (
       <BarStyle>
         <Logo> CrytoDash </Logo>
         <div />
-        <ControlButton active name="dashBoard"/>
-        <ControlButton name="settings"/>
+        <ControlButton name="dashboard" />
+        <ControlButton name="settings" />
       </BarStyle>
     )
   }
 }
 
-export default Bar;
+
+export default AppBar;
