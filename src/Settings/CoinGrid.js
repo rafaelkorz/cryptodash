@@ -1,6 +1,7 @@
-import styled, {css} from 'styled-components';
-import { AppContext } from '../App/AppProvider';
-import { SelectableTile, Tile } from '../Shared/Tile';
+import React from 'react';
+import styled from 'styled-components';
+import {AppContext} from "../App/AppProvider";
+import CoinTile from "./CoinTile";
 
 export const CoinGridStyled = styled.div`
   display: grid;   
@@ -9,13 +10,26 @@ export const CoinGridStyled = styled.div`
   margin-top: 40px; 
 `
 
+function getLowerSectionCoins(coinList, filteredCoins){
+  return (filteredCoins && Object.keys(filteredCoins)) ||
+    Object.keys(coinList).slice(0, 100)
+}
+
+function getCoinsToDisplay(coinList, topSection, favorites, filterCoins){
+  return topSection ? favorites : getLowerSectionCoins(coinList, filterCoins);
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
-export default function () {
-  return <AppContext.Consumer>
-    {({coinList}) => <CoinGridStyled>
-        {Object.keys(coinList).map(coinKey =>
-            <SelectableTile>{coinKey}</SelectableTile>
-          )}
-      </CoinGridStyled>}
+export default function ({topSection}){
+  return (
+    <AppContext.Consumer>
+    {({coinList, favorites, filteredCoins}) => (
+      <CoinGridStyled>
+        {getCoinsToDisplay(coinList, topSection, favorites, filteredCoins).map(coinKey =>
+          <CoinTile key={coinKey} topSection={topSection} coinKey={coinKey}/>
+        )}
+      </CoinGridStyled>
+    )}
   </AppContext.Consumer>
+  );
 }
